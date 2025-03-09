@@ -8,11 +8,10 @@
 
 ## Setup
 
-1. Download crAPI docker-compose file: `curl -o docker-compose.yml https://raw.githubusercontent.com/OWASP/crAPI/main/deploy/docker/docker-compose.yml`
-2. Pull the images: `docker compose pull`
-3. Start the containers: `docker compose -f docker-compose.yml --compatibility up -d`
-4. Go to `http://localhost:8888`
-5. The mail server is available at `http://localhost:8025`
+1. Pull the images: `docker compose pull`
+2. Start the containers: `docker compose -f docker-compose.yml --compatibility up -d`
+3. Go to `http://localhost:8888`
+4. The mail server is available at `http://localhost:8025`
 
 ### OWASP Top 10 API Security Risks and challenges
 
