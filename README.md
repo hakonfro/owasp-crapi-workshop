@@ -1,20 +1,26 @@
-# Oppgaver til OWASP Top 10 - OWASP WebGoat
+# Oppgaver til OWASP Top 10 - OWASP crAPI
 
-## Kom i gang
+## Useful tools
 
-1. Last ned crAPI med docker compose: `curl -o docker-compose.yml https://raw.githubusercontent.com/OWASP/crAPI/main/deploy/docker/docker-compose.yml`
-2. `docker compose pull`
-3. `docker compose -f docker-compose.yml --compatibility up -d`
-4.Gå til `http://localhost:8888`
-5.En mailserveren er tilgjengelig på `http://localhost:8025`
+- [Burp Suite](https://portswigger.net/burp)
+- [Postman](https://www.postman.com/)
+- [Docker](https://www.docker.com/)
 
-### Oppgaver
+## Setup
+
+1. Download crAPI docker-compose file: `curl -o docker-compose.yml https://raw.githubusercontent.com/OWASP/crAPI/main/deploy/docker/docker-compose.yml`
+2. Pull the images: `docker compose pull`
+3. Start the containers: `docker compose -f docker-compose.yml --compatibility up -d`
+4. Go to `http://localhost:8888`
+5. The mail server is available at `http://localhost:8025`
+
+### OWASP Top 10 API Security Risks and challenges
 
 ## BOLA
 
 BOLA, or Broken Object-Level Authorization, is a type of security vulnerability that occurs when an application fails to properly enforce access controls at the object or data level. This can lead to unauthorized users gaining access to sensitive data or performing actions they should not be allowed to perform within the application.
 
-Read more about BOLA: https://owasp.org/API-Security/editions/2023/en/0xa1-broken-object-level-authorization/
+[Read more about BOLA here](https://owasp.org/API-Security/editions/2023/en/0xa1-broken-object-level-authorization/)
 
 ### Challenge 1 — Access details of another user’s vehicle
 
@@ -22,10 +28,11 @@ To solve the challenge, you need to leak sensitive information of another user�
 
 Find an API endpoint that receives a vehicle ID and returns information about it.
 
-<details><summary>Løsningsforslag</summary>
+<details><summary>Solution ⚠️</summary>
   
-1. Gå til `/vehicle`
-2. Gjør et kall til en annen id for å finne noen andres profil: gjør en request og inspiser den i nettverkstaben. Prøv å bytt ut id-en med noen tall ved å inkrementere din egen id et par ganger
+1. Find the endpoint that receives a vehicle ID and returns information about it.
+2. Find another user's vehicle ID in the /community page
+3. Make a request to the endpoint with the other user's vehicle ID
 
 </details>
 
@@ -37,13 +44,12 @@ crAPI allows vehicle owners to contact their mechanics by submitting a "contact 
 - Find an hidden API endpoint that exposes details of a mechanic report
 - Change the report ID to access other reports
 
-<details><summary>Løsningsforslag </summary>
+<details><summary>Solution ⚠️</summary>
 
-1. Gå til `/contact-mechanic`
-2. Skriv inn brukernavn `tom` og passord `cat`
-3. Bruk nettverkstaben til å inspisere en request som går til `profile`
-4. Requesten i forrige oppgave gikk til `/IDOR/profile`. Da kan vi prøve med `/IDOR/profile/<userId fra forrige oppgave>`
-5. Gjør et kall til en annen id for å finne noen andres profil: gjør en request og inspiser den i nettverkstaben. Prøv å bytt ut id-en med noen tall ved å inkrementere din egen id et par ganger
+1. Go to “Contact Mechanic” page and fill out the form
+2. Inspect the request in the network tab
+3. Find an hidden API endpoint that exposes details of a mechanic report
+4. Change the report ID to access other reports
 
 </details>
 
@@ -59,15 +65,15 @@ Find an email address of another user on crAPI
 
 Brute forcing might be the answer. If you face any protection mechanisms, remember to leverage the predictable nature of REST APIs to find more similar API endpoints.
 
-<details><summary>Løsningsforslag ⚠️</summary>
+<details><summary>Solution ⚠️</summary>
   
-1. Gå til `/forgot-password`
-2. Notice the “Forgot Password” option on the login page
-3. Receive a OTP code via email
-4. Reset the password of another user
+1. Go to Forgot Password” option on the login page
+2. Receive a OTP code via email
+3. change endpoint from v3 to v2. 
+3. Reset the password of another user
 
 </details>
-  
+
 ## Excessive data exposure
 
 Excessive data exposure is a critical security issue that occurs when sensitive information is unintentionally or improperly disclosed to unauthorized individuals or systems. It can have serious consequences for individuals and organizations, including data breaches, privacy violations, and legal ramifications.
@@ -78,17 +84,10 @@ Read more about Excessive data exposure: https://owasp.org/API-Security/editions
 
 - explore the “Community” page and find information about other users
 
-<details><summary>Løsningsforslag ⚠️</summary>
+<details><summary>Solution ⚠️</summary>
   
-1.Gå til `/community`
-</details>
-
-<details><summary>Løsningsforslag ⚠️</summary>
-  
-7. Skriv for eksempel inn `<script>alert()</script>` i kredittkortfeltet siden kredittkortinfoen printes på siden
-10. Inspiser kildekoden (source) og finn `goatApp/View/GoatRouter.js`. Let etter en route for test
-11. Målet er å trigge funksjonen via url. Gå til `http://localhost:8080/WebGoat/start.mvc#test/<script>webgoat.customjs.phoneHome()<%2Fscript>` i en annen tab og ha konsollen oppe (%2F er HTML-enkodingen av /)
-
+1.Go to `/community`
+2.Find an API endpoint that leaks sensitive information of other users in the response body
 </details>
 
 ### Challenge 5 — Find an API endpoint that leaks an internal property of a video
@@ -96,13 +95,11 @@ Read more about Excessive data exposure: https://owasp.org/API-Security/editions
 - In this challenge, you need to find an internal property of the video resource that shouldn’t be exposed to the user. This property name and value can help you to exploit other vulnerabilities.
 - Try to upload a video
 
-<details><summary>Løsningsforslag ⚠️</summary>
+<details><summary>Solution ⚠️</summary>
 
-1. Gå til `/video`
+1. Go to `/video`
 2. Try to upload a video
-3. Inspiser nettverksfanen og finn en endpoint som kan brukes til å laste opp en video
-4. Gjør et kall til en annen id for å finne noen andres profil: gjør en request og inspiser den i nettverkstaben. Prøv å bytt ut id-en med noen tall ved å inkrementere din egen id et par ganger.
-
+3. Inspect the response body and find an internal property of the video resource that shouldn’t be exposed to the user: `video_id`, `name`, `profileVideo`
 </details>
 
 ## Rate Limiting
@@ -116,9 +113,13 @@ Read more about Rate Limiting: https://owasp.org/API-Security/editions/2023/en/0
 - Try to contact a mechanic
 - noticed the parameter “repeat_request_if_failed” was set to “false,” with “number_of_repeats” at a value of 1.
 
-<details><summary>Løsningsforslag ⚠️</summary>
+<details><summary>Solution ⚠️</summary>
   
-“Service unavailable. Seems like you caused a Layer 7 DoS :)”
+1. Go to the Contact Mechanic’ feature, inspect the request in the network tab
+2. Notice the parameter “repeat_request_if_failed” was set to “false,” with “number_of_repeats” at a value of 1.
+3. Change the parameter to `true` and `1000`
+4. Send the request
+5. You will get a “Service unavailable. Seems like you caused a Layer 7 DoS :)”
 
 </details>
 
@@ -132,14 +133,13 @@ Read more about Broken Function Level Authorization: https://owasp.org/API-Secur
 
 Leverage the predictable nature of REST APIs to find an admin endpoint to delete videos
 
-Delete a video of someone else
+<details><summary>Solution ⚠️</summary>
 
-<details><summary>Løsningsforslag</summary>
-
-- Use the “Change Video Name” option to modify the name of the video.
-- Try to delete a video of another user
-- Notice that the method used was PUT. DELETE method was permitted.
-- Change the user to “admin”.
+1. Go to `/video`
+2. Use the “Change Video Name” option to modify the name of the video.
+3. Try to delete a video of another user
+4. Notice that the method used was PUT. DELETE method was permitted.
+5. Change the user to “admin”.
 
 </details>
 
@@ -154,10 +154,12 @@ crAPI allows users to return items they have ordered. You simply click the "retu
 Leverage the predictable nature of REST APIs to find a shadow API endpoint that allows you to edit properties of a specific order.
 
 
-<details><summary>Løsningsforslag</summary>
+<details><summary>Solution ⚠️</summary>
 - Explore the ‘shop’ page, where we noticed an available balance of $100 and two items: ‘Seat’ and ‘Wheel’.
 - Placed an order and closely examined the request and response from the workshop API.
-
+- Find the endpoint that allows you to edit properties of a specific order.
+- Change the request method from GET to PUT.
+- Modify the ‘status’ to ‘returned’ in the request body.
 
 </details>
 
@@ -167,12 +169,15 @@ SSRF is a type of security vulnerability that occurs when an attacker can manipu
 
 Read more about Server-Side Request Forgery: https://owasp.org/API-Security/editions/2023/en/0xa7-server-side-request-forgery/
 
-### Challenge 11 — Make crAPI send an HTTP call to “www.google.com" and return the HTTP response.
+### Challenge 11 — Make crAPI send an HTTP call to “www.google.com" and return the HTTP response
 
 - Use the “Send HTTP Request” option to send an HTTP request to “www.google.com” and return the HTTP response.
 
-<details><summary>Løsningsforslag</summary>
-  
+<details><summary>Solution ⚠️</summary>
+1. Incpect the request from the contact mechanic form in Burp Suite.
+2. Discover a URL that our request was using.
+3. Modify the request URL. By substituting the URL, we successfully prompted the server to make an HTTP call to “www.google.com."
+
 </details>
 
 ## NoSQL Injection
@@ -183,11 +188,16 @@ NoSQL Injection is a type of security vulnerability that occurs in applications 
 
 - Explore the ‘coupon’ page and find a way to get free coupons without knowing the coupon code.
 
-<details><summary>Løsningsforslag</summary>
+<details><summary>Solution ⚠️</summary>
   
+We initiated the challenge by intercepting the validate-coupon request in Burp Suite
+
+1. Intercept the validate-coupon request in Burp Suite
+2. Modify the request body to `{ "$ne": 1 }`
+
 </details>
 
-SQL Injection
+## SQL Injection
 
 SQL Injection (SQLi) is a type of security vulnerability that occurs in web applications when user-supplied data is not properly validated or sanitized before being included in SQL queries. This allows malicious users to manipulate these queries to gain unauthorized access to a database or perform unintended actions on the database.
 
@@ -195,8 +205,13 @@ SQL Injection (SQLi) is a type of security vulnerability that occurs in web appl
 
 - Explore the ‘coupon’ page and find a way to get free coupons without knowing the coupon code.
 
-<details><summary>Løsningsforslag</summary>
+<details><summary>Solution ⚠️</summary>
   
+1. Go to `/coupon`
+2. Enter `admin` in the coupon code field
+3. Inspect the request in the network tab
+4. Notice the request is sent to `http://localhost:8080/WebGoat/start.mvc#test/webgoat.customjs.phoneHome()`
+
 </details>
 
 ## Unauthenticated access
@@ -207,8 +222,13 @@ Unauthenticated access refers to allowing users or clients to interact with a sy
 
 - Explore the ‘coupon’ page and find a way to get free coupons without knowing the coupon code.
 
-<details><summary>Løsningsforslag</summary>
+<details><summary>Solution ⚠️</summary>
   
+1. Go to `/coupon`
+2. Enter `admin` in the coupon code field
+3. Inspect the request in the network tab
+4. Notice the request is sent to `http://localhost:8080/WebGoat/start.mvc#test/webgoat.customjs.phoneHome()`
+
 </details>
 
 ## JWT Token
@@ -219,6 +239,11 @@ A JWT (JSON Web Token) is a compact, URL-safe means of representing claims to be
 
 JWT Authentication in crAPI is vulnerable to various attacks. Find any one way to forge a valid JWT token and get full access to the platform.
 
-<details><summary>Løsningsforslag</summary>
+<details><summary>Solution ⚠️</summary>
   
+1. Go to `/coupon`
+2. Enter `admin` in the coupon code field
+3. Inspect the request in the network tab
+4. Notice the request is sent to `http://localhost:8080/WebGoat/start.mvc#test/webgoat.customjs.phoneHome()`
+
 </details>
